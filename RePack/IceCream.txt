@@ -1,0 +1,182 @@
+public class MainActivity extends AppCompatActivity {
+    static int precioFinal;
+    int precioUnidad=3;
+    static int aux;
+    int cantidadHelados=1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+    }
+    public void onClickButtonOrder(View view){
+        calculatePrice();
+    }
+
+    public void onClickChoco(View view){
+        EditText editTextNombre = (EditText) findViewById(R.id.Nombre);
+        String textNombre = editTextNombre.getText().toString();
+        if(!editTextNombre.getText().toString().isEmpty()){
+            CheckBox CheckBox = (CheckBox) findViewById(R.id.Checkboxchoco);
+            if(CheckBox.isChecked()){
+                TextView chocolate = findViewById(R.id.chocolate);
+                chocolate.setText("¿Incluir chocolate?: Si");
+                aux+=10;
+            }else{
+                TextView chocolate = findViewById(R.id.chocolate);
+                chocolate.setText("¿Incluir chocolate?: No");
+                if(aux!=0){
+                    aux-=10;
+                }
+            }
+        }else{
+
+            Toast toast1 = Toast.makeText(getApplicationContext(),
+                    "El campo nombre no puede estar vacío", Toast.LENGTH_SHORT);
+            toast1.show();
+        }
+    }
+    public void onClickCrema(View view){
+        EditText editTextNombre = (EditText) findViewById(R.id.Nombre);
+        String textNombre = editTextNombre.getText().toString();
+        if(!editTextNombre.getText().toString().isEmpty()){
+            CheckBox CheckBox = (CheckBox) findViewById(R.id.Checkbox);
+            if(CheckBox.isChecked()){
+                TextView cremabatida = findViewById(R.id.cremabatida);
+                cremabatida.setText("¿Incluir crema batida?: Si");
+                aux+=5;
+            }else{
+                TextView cremabatida = findViewById(R.id.cremabatida);
+                cremabatida.setText("¿Incluir crema batida?: No");
+                if(aux!=0){
+                    aux-=5;
+                }
+            }
+        }else{
+            Toast toast1 = Toast.makeText(getApplicationContext(),
+                    "El campo nombre no puede estar vacío", Toast.LENGTH_SHORT);
+            toast1.show();
+        }
+    }
+
+    public void calculatePrice(){
+        precioFinal+=precioUnidad*cantidadHelados+aux;
+        String total = Integer.toString (precioFinal);
+        displayPriceInformation(total);
+    }
+
+    public void displayPriceInformation(String total){
+
+        EditText editTextNombre = (EditText) findViewById(R.id.Nombre);
+        String textNombre = editTextNombre.getText().toString();
+
+
+        if(!editTextNombre.getText().toString().isEmpty()){
+
+            TextView nombreTexto = findViewById(R.id.Nombretext);
+            nombreTexto.setText("Nombre: " + textNombre);
+
+            TextView precio = findViewById (R.id.precio);
+            precio.setText("Total: € " + total);
+
+            TextView cantidadnumero = findViewById (R.id.cantidadnumero);
+            cantidadnumero.setText("Cantidad: " + cantidadHelados);
+
+        }else{
+
+            Toast toast1 = Toast.makeText(getApplicationContext(),
+                            "El campo nombre no puede estar vacío", Toast.LENGTH_SHORT);
+            toast1.show();
+        }
+
+    }
+
+    public void clean(View view){
+        TextView precio = findViewById (R.id.precio);
+        precio.setText("€ 0");
+        TextView cantidad = findViewById (R.id.cantidad);
+        cantidad.setText("1");
+        cantidadHelados=1;
+        precioFinal=0;
+        CheckBox CheckBox = (CheckBox) findViewById(R.id.Checkbox);
+        CheckBox CheckBoxchoco = (CheckBox) findViewById(R.id.Checkboxchoco);
+
+        CheckBox.setChecked(false);
+        CheckBoxchoco.setChecked(false);
+
+        CheckBox.callOnClick();
+        CheckBoxchoco.callOnClick();
+
+
+        EditText editTextNombre = (EditText) findViewById(R.id.Nombre);
+        editTextNombre.getText().clear();
+
+        TextView nombreTexto = findViewById(R.id.Nombretext);
+        nombreTexto.setText("Nombre: ");
+
+        TextView cantidadnumero = findViewById(R.id.cantidadnumero);
+        cantidadnumero.setText("Cantidad: 0");
+    }
+
+    public void increase(View view){
+      if (cantidadHelados<10){
+          cantidadHelados++;
+          String helados = Integer.toString (cantidadHelados);
+          TextView cantidad = findViewById (R.id.cantidad);
+          cantidad.setText(helados);
+          TextView cantidadnumero = findViewById(R.id.cantidadnumero);
+          cantidadnumero.setText("Cantidad: " + Integer.toString(cantidadHelados));
+        }else{
+          Toast increase = Toast.makeText(getApplicationContext(), "No pueden seleccionar más de 10 helados", Toast.LENGTH_SHORT);
+          increase.show();
+      }
+    }
+
+    public void decrease(View view){
+        if(cantidadHelados>1) {
+            cantidadHelados--;
+            String helados = Integer.toString (cantidadHelados);
+            TextView cantidad = findViewById (R.id.cantidad);
+            cantidad.setText(helados);
+            TextView cantidadnumero = findViewById(R.id.cantidadnumero);
+            cantidadnumero.setText("Cantidad: " + Integer.toString(cantidadHelados));
+            TextView precio = findViewById(R.id.precio);
+
+        }else{
+            Toast decrease = Toast.makeText(getApplicationContext(), "No puede seleccionar menos de 1 helado", Toast.LENGTH_SHORT);
+            decrease.show();
+        }
+    }
+
+    public void composeEmail(View view) {
+        TextView Nombretext = findViewById (R.id.Nombretext);
+        TextView cremabatida = findViewById (R.id.cremabatida);
+        TextView chocolate = findViewById (R.id.chocolate);
+        TextView cantidadnumero = findViewById (R.id.cantidadnumero);
+        TextView precio = findViewById (R.id.precio);
+        TextView visita = findViewById (R.id.visita);
+
+        String[] addresses = new String[1];
+        String subject;
+        String text=Nombretext.getText().toString() + "\n" + cremabatida.getText().toString() + "\n" + chocolate.getText().toString() + "\n" + cantidadnumero.getText().toString() + "\n" + precio.getText().toString() + "\n" + visita.getText().toString();
+        String text1;
+
+        addresses[0]="heladerafamoplay@gmail.com";
+        text1 = "danieldoral7@gmail.com";
+        subject = "Nuevo pedido";
+
+
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_CC, text1);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT,text);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+}
